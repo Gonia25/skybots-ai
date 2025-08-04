@@ -3,482 +3,615 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkyBot – Conversational AI Demos</title>
-  <!-- Google Fonts for futuristic typography -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <title>SkyBots.ai – Conversational AI Showcase</title>
+  <!-- Google Fonts for modern futuristic typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for simple icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pItdXKJkAo+PT8Xb16+KyvYtXq6YOxqfNdoUF2wy92CM12EneGZLyktbjLaKZpu2L7zqCK3sC+b/vZDyHgPZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
-      /* Accent colours for neon highlights */
-      --accent-teal: #00cfff;
-      --accent-violet: #8f5df4;
-      --text-light: #ffffff;
+      --primary-color: #0af; /* Neon blue accent */
+      --secondary-color: #8e2de2; /* Violet accent */
+      --text-light: #fff;
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --card-border: rgba(255, 255, 255, 0.3);
     }
-
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
       font-family: 'Inter', sans-serif;
       color: var(--text-light);
-      background: #000; /* fallback colour */
+      background: #020d1f;
       overflow-x: hidden;
     }
-
-    /* Background container with two layers of stars to simulate motion */
-    #space-bg {
+    /* Starfield canvas fills page */
+    #starfield {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
       z-index: -2;
     }
-
-    #space-bg img {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      opacity: 0.6;
-    }
-
-    #space-bg .layer1 {
-      animation: driftLayer1 60s linear infinite;
-    }
-
-    #space-bg .layer2 {
-      animation: driftLayer2 100s linear infinite;
-    }
-
-    /* Keyframes for slow drifting movement */
-    @keyframes driftLayer1 {
-      from {
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        transform: translate3d(-50%, -25%, 0);
-      }
-    }
-
-    @keyframes driftLayer2 {
-      from {
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        transform: translate3d(-25%, -50%, 0);
-      }
-    }
-
-    /* Slight gradient overlay for readability */
-    #space-bg::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0, 10, 30, 0.5), rgba(0, 20, 60, 0.8));
-      z-index: 1;
-    }
-
-    /* Header and navigation */
-    header {
+    /* Dark overlay for readability */
+    #overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      display: flex;
-      justify-content: center;
-      padding: 10px 20px;
-      z-index: 100;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 30, 0.7), rgba(0, 10, 40, 0.9));
+      z-index: -1;
     }
-
-    .nav-wrapper {
-      width: 100%;
-      max-width: 1300px;
+    nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 20px 40px;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      z-index: 10;
     }
-
-    .logo {
-      display: flex;
-      align-items: center;
+    nav .logo {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.5rem;
-    }
-
-    .logo .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--accent-teal), var(--accent-violet));
-      margin-right: 8px;
-    }
-
-    .schedule-btn {
-      font-family: 'Inter', sans-serif;
-      padding: 8px 24px;
-      border-radius: 999px;
-      border: 1px solid var(--accent-teal);
-      background: transparent;
-      color: var(--accent-teal);
-      cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-
-    .schedule-btn:hover {
-      background: var(--accent-teal);
-      color: #00131f;
-      box-shadow: 0 0 12px var(--accent-teal);
-    }
-
-    /* Hero section */
-    .hero {
-      min-height: 90vh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
-      padding: 120px 20px 80px;
+      gap: 0.5rem;
     }
-
+    nav .logo img {
+      width: 32px;
+      height: 32px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+      font-size: 0.95rem;
+    }
+    nav ul li a {
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav ul li a:hover {
+      color: var(--primary-color);
+    }
+    .sticky-cta {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      background: var(--primary-color);
+      color: #000;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 10px var(--primary-color);
+      z-index: 11;
+    }
+    .hero {
+      text-align: center;
+      padding: 120px 20px 100px;
+      position: relative;
+    }
     .hero h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.8rem;
-      line-height: 1.3;
-      background: rgba(0, 0, 0, 0.45);
-      padding: 15px 25px;
-      border-radius: 12px;
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 2.5rem;
+      margin-bottom: 15px;
     }
-
-    .hero h1 .highlight {
-      color: var(--accent-teal);
-      animation: highlightGlow 1.5s ease-in-out infinite;
-    }
-
-    @keyframes highlightGlow {
-      0%, 100% { text-shadow: 0 0 8px var(--accent-teal), 0 0 15px var(--accent-violet); }
-      50% { text-shadow: 0 0 4px var(--accent-violet), 0 0 8px var(--accent-teal); }
-    }
-
-    .hero .accent-line {
-      margin-top: 14px;
-      height: 3px;
-      width: 200px;
-      background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));
-      border-radius: 2px;
-    }
-
-    /* Audio demos section */
-    .demos {
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .demos h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
+    .hero p {
+      font-size: 1.2rem;
       margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
     }
-
-    .audio-grid {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .audio-card {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      transition: transform 0.4s, box-shadow 0.4s;
-    }
-
-    .audio-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
-    }
-
-    .audio-card h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .audio-card audio {
-      width: 100%;
-      outline: none;
-    }
-
-    /* Metrics section */
-    .metrics {
-      padding: 60px 20px 80px;
-      text-align: center;
-    }
-
-    .metrics h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
-      margin-bottom: 10px;
-    }
-
-    .metrics .line {
-      height: 3px;
-      width: 220px;
-      margin: 0 auto 40px;
-      background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));
-      border-radius: 2px;
-    }
-
-    .stat-container {
+    .hero .cta-buttons {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
-      max-width: 800px;
-      margin: 0 auto;
     }
-
-    .stat-card {
-      width: 320px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 30px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    .hero .cta-buttons a {
+      padding: 12px 22px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.3s;
     }
-
-    .stat-card h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.4rem;
-      color: var(--accent-teal);
-      margin-bottom: 10px;
+    .hero .cta-primary {
+      background: var(--primary-color);
+      color: #000;
     }
-
-    .stat-card p {
-      font-size: 1rem;
-      line-height: 1.4;
+    .hero .cta-secondary {
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
     }
-
-    /* Chatbot demos section */
-    #chatbot-demos {
-      padding: 60px 20px;
-      text-align: center;
+    .hero .cta-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 10px var(--primary-color);
     }
-    #chatbot-demos h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
-      margin-bottom: 20px;
+    .hero .cta-secondary:hover {
+      background: var(--primary-color);
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 0 0 10px var(--primary-color);
     }
-    .chatbot-demo-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
+    .section {
+      padding: 80px 20px;
       max-width: 1200px;
       margin: 0 auto;
     }
+    .section h2 {
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .section h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+    /* Chatbot demos */
+    .chatbot-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
     .chatbot-demo {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
       padding: 20px;
       backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      max-width: 420px;
-      width: 100%;
+      width: 420px;
+      max-width: 100%;
     }
     .chatbot-demo h3 {
+      margin-top: 0;
       font-family: 'Orbitron', sans-serif;
       font-size: 1.2rem;
       margin-bottom: 10px;
     }
     .chatbot-demo iframe {
       width: 100%;
-      height: 600px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
+      height: 500px;
+      border: none;
+      border-radius: 10px;
     }
-
-    /* Animation for fade and slide when sections come into view */
-    .fade-slide {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    /* Voice demos */
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
     }
-
-    .fade-slide.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .voice-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
     }
-
+    .voice-card h4 {
+      font-family: 'Orbitron', sans-serif;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .voice-card p {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+    .voice-card audio {
+      width: 100%;
+      outline: none;
+    }
+    /* Testimonials carousel */
+    .testimonials {
+      text-align: center;
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .testimonial-slide {
+      display: none;
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+    }
+    .testimonial-slide.active {
+      display: block;
+    }
+    .testimonial-slide .stars {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .testimonial-author {
+      margin-top: 10px;
+      font-style: italic;
+      color: #aaa;
+    }
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 30px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .stat-card .number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .stat-card p {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+    /* Feature cards */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .feature-card i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+    }
+    /* Trust row */
+    .trust-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      font-size: 2rem;
+      margin-top: 40px;
+    }
+    .trust-row i {
+      color: var(--primary-color);
+    }
+    footer {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 40px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
     @media (max-width: 600px) {
       .hero h1 {
         font-size: 2rem;
-        padding: 10px 15px;
       }
-      .metrics .stat-card {
-        width: 280px;
+      .hero p {
+        font-size: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Moving starry background -->
-  <div id="space-bg">
-    <img src="space_layer1.jpg" alt="Starry background layer" class="layer1" />
-    <img src="space_layer2.jpg" alt="Starry background layer" class="layer2" />
-  </div>
-
-  <!-- Navigation bar with logo and schedule button -->
-  <header>
-    <div class="nav-wrapper">
-      <div class="logo"><span class="dot"></span>SkyBot</div>
-      <button class="schedule-btn" onclick="location.href='schedule.html'">Schedule a Demo</button>
+  <canvas id="starfield"></canvas>
+  <div id="overlay"></div>
+  <a href="schedule.html" class="sticky-cta">Get a Demo</a>
+  <nav>
+    <div class="logo">
+      <img src="voicebot_mascot.png" alt="SkyBot Mascot" />
+      SkyBot
     </div>
-  </header>
-
-  <!-- Hero section with dynamic phrases -->
-  <section class="hero fade-slide">
-    <h1>
-      <span id="phrase-prefix">Elevating</span>
-      <span id="phrase-keyword" class="highlight">Customer Experience</span>
-      with Conversational AI Agents
-    </h1>
-    <div class="accent-line"></div>
+    <ul>
+      <li><a href="#chatbots">Chatbots</a></li>
+      <li><a href="#voicebots">Voice Demos</a></li>
+      <li><a href="#about" class="about-link">About Us</a></li>
+    </ul>
+  </nav>
+  <section class="hero" id="hero">
+    <h1>The Sky is the Limit.</h1>
+    <p>Where AI assistants become your most reliable team members.</p>
+    <div class="cta-buttons">
+      <a href="#chatbots" class="cta-primary">See Live Demo</a>
+      <a href="#contact" class="cta-secondary">Schedule a Call</a>
+    </div>
   </section>
-
-  <!-- Chatbot demo section (two interactive chatbots) -->
-  <section id="chatbot-demos" class="fade-slide">
+  <section class="section" id="chatbots">
     <h2>Try Our AI Chatbots Live</h2>
-    <!-- Mascot for chatbots -->
-    <div style="display:flex; justify-content:center; margin-bottom:20px;">
-      <img src="chatbot_mascot.png" alt="Chatbot Mascot" style="width:120px; height:auto;" />
-    </div>
-    <div class="chatbot-demo-container">
+    <div class="chatbot-container">
       <div class="chatbot-demo">
-        <h3>Chatbot Demo 1</h3>
-        <iframe src="https://creator.voiceflow.com/prototype/67b86887c97c50a0c1d01c96" width="400" height="600" frameborder="0" allow="microphone; autoplay"></iframe>
+        <h3>Sales Assistant Bot</h3>
+        <iframe src="https://creator.voiceflow.com/prototype/67b86887c97c50a0c1d01c96" allow="microphone; autoplay"></iframe>
       </div>
       <div class="chatbot-demo">
-        <h3>Chatbot Demo 2</h3>
-        <iframe src="https://creator.voiceflow.com/prototype/67c6233d005cea773533d6c3" width="400" height="600" frameborder="0" allow="microphone; autoplay"></iframe>
+        <h3>Customer Support Bot</h3>
+        <iframe src="https://creator.voiceflow.com/prototype/67c6233d005cea773533d6c3" allow="microphone; autoplay"></iframe>
       </div>
     </div>
   </section>
-
-  <!-- Audio demo section -->
-  <section class="demos fade-slide">
-    <!-- Mascot for voicebot demos -->
-    <div style="display:flex; justify-content:center; margin-bottom:20px;">
-      <img src="voicebot_mascot.png" alt="Voicebot Mascot" style="width:120px; height:auto;" />
-    </div>
-    <h2>Listen to Our Demos</h2>
-    <div class="audio-grid">
-      <div class="audio-card">
-        <h3>Credit Check Over the Phone</h3>
+  <section class="section" id="voicebots">
+    <h2>Listen to Our Voice Demos</h2>
+    <div class="voice-grid">
+      <div class="voice-card">
+        <h4>Credit Check Over the Phone</h4>
+        <p>Simulates a live finance call.</p>
         <audio controls preload="metadata">
           <source src="credit_check_over_the_phone.m4a" type="audio/mp4" />
-          Your browser does not support this audio element.
+          Your browser does not support the audio element.
         </audio>
       </div>
-      <div class="audio-card">
-        <h3>Deciding Lease vs. Own</h3>
+      <div class="voice-card">
+        <h4>Deciding Lease vs. Own</h4>
+        <p>Helps customers make purchase decisions.</p>
         <audio controls preload="metadata">
           <source src="deciding_lease_vs_own.m4a" type="audio/mp4" />
-          Your browser does not support this audio element.
+          Your browser does not support the audio element.
         </audio>
       </div>
-      <div class="audio-card">
-        <h3>Reservation Demo</h3>
+      <div class="voice-card">
+        <h4>Reservation Demo</h4>
+        <p>Automates booking in under 2 minutes.</p>
         <audio controls preload="metadata">
           <source src="reservation_demo.m4a" type="audio/mp4" />
-          Your browser does not support this audio element.
+          Your browser does not support the audio element.
         </audio>
       </div>
-      <div class="audio-card">
-        <h3>Trade-In / Appraisals</h3>
+      <div class="voice-card">
+        <h4>Trade-In / Appraisals</h4>
+        <p>Provides instant car appraisal estimates.</p>
         <audio controls preload="metadata">
           <source src="trade_in_appraisals.m4a" type="audio/mp4" />
-          Your browser does not support this audio element.
+          Your browser does not support the audio element.
         </audio>
       </div>
     </div>
   </section>
-
-  <!-- Metrics section -->
-  <section class="metrics fade-slide">
-    <h2>Innovation in Every Interaction</h2>
-    <div class="line"></div>
-    <div class="stat-container">
-      <div class="stat-card">
-        <h3><span class="count" data-target="85">0</span>%</h3>
-        <p>Customer Experience increases CSAT by 85%</p>
+  <section class="section" id="testimonials">
+    <h2>What People Are Saying</h2>
+    <div class="testimonials">
+      <div class="testimonial-slide active">
+        <div class="stars">★★★★★</div>
+        <p>“This is like the Amazon of technology. My booking system runs itself.”</p>
+        <div class="testimonial-author">— Boutique Hotel Owner</div>
       </div>
-      <div class="stat-card">
-        <h3><span class="count" data-target="75">0</span>%</h3>
-        <p>Agent Productivity increases Contact Center Agent Productivity by 75%</p>
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <p>“Handles my entire call center with dozens of calls at once. Saving thousands daily.”</p>
+        <div class="testimonial-author">— Retail Ops Director</div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <p>“It pays for itself in less than a month. I can’t believe the price.”</p>
+        <div class="testimonial-author">— Dental Clinic Manager</div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <p>“Our CSAT jumped 85% in 60 days. Feels like talking to a real person 24/7.”</p>
+        <div class="testimonial-author">— SaaS Startup CEO</div>
       </div>
     </div>
   </section>
+  <section class="section" id="stats">
+    <h2>Innovation in Every Interaction</h2>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="number" data-target="52">0%</div>
+        <p>Increase in CSAT</p>
+      </div>
+      <div class="stat-card">
+        <div class="number" data-target="46">0%</div>
+        <p>Boost in Agent Productivity</p>
+      </div>
+      <div class="stat-card">
+        <div class="number" data-target="70">0%</div>
+        <p>Reduction in Missed Calls</p>
+      </div>
+      <div class="stat-card">
+        <div class="number" data-target="60">0%</div>
+        <p>Increase in Lead Capture</p>
+      </div>
+      <div class="stat-card">
+        <div class="number" data-target="50">0%</div>
+        <p>Reduction in Admin Workload</p>
+      </div>
+      <div class="stat-card">
+        <div class="number" data-target="90">0%</div>
+        <p>Faster Response Times</p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="features">
+    <h2>Why Choose SkyBots?</h2>
+    <div class="features">
+      <div class="feature-card">
+        <i class="fas fa-cog"></i>
+        <p>We customize and install all for one low price.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-user-tie"></i>
+        <p>It’s like an unpaid secretary for life.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-robot"></i>
+        <p>Handles all repetitive tasks, appointments, and works while you sleep.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-bell"></i>
+        <p>Never miss a client ever again.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-dollar-sign"></i>
+        <p>It pays for itself within a month.</p>
+      </div>
+    </div>
+    <div class="trust-row">
+      <i class="fas fa-notes-medical" title="Healthcare"></i>
+      <i class="fas fa-car" title="Automotive"></i>
+      <i class="fas fa-building" title="Real Estate"></i>
+      <i class="fas fa-shopping-bag" title="Retail"></i>
+      <i class="fas fa-laptop-code" title="SaaS"></i>
+    </div>
+    <div style="margin-top:40px;text-align:center;">
+      <strong>30-Day ROI Guarantee:</strong> If SkyBots.ai doesn’t pay for itself in the first month, your next month is free.
+    </div>
+  </section>
+  <footer id="contact">
+    <p>Contact: <a href="mailto:SkyBotsAi@gmail.com">SkyBotsAi@gmail.com</a></p>
+    <p>
+      <a href="#hero">Home</a> |
+      <a href="#chatbots">Demos</a> |
+      <a href="about.html">About Us</a> |
+      <a href="schedule.html">Contact</a>
+    </p>
+    <p>© <span id="year"></span> SkyBots.ai</p>
+  </footer>
 
   <script>
-    // Rotate through phrases with highlighted keywords
-    const phrases = [
-      { prefix: 'Elevating', keyword: 'Customer Experience' },
-      { prefix: 'Empowering', keyword: 'Salespeople' },
-      { prefix: 'Supporting', keyword: 'Employees' }
-    ];
-    let phraseIndex = 0;
-    const prefixEl = document.getElementById('phrase-prefix');
-    const keywordEl = document.getElementById('phrase-keyword');
-
-    function changePhrase() {
-      phraseIndex = (phraseIndex + 1) % phrases.length;
-      prefixEl.textContent = phrases[phraseIndex].prefix;
-      keywordEl.textContent = phrases[phraseIndex].keyword;
+    // Starfield animation
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const numStars = 200;
+    function initStars() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5 + 0.5,
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
     }
-    // Change phrase every 5 seconds
-    setInterval(changePhrase, 5000);
-
-    // Intersection observer for fade-slide and count animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          // If there are counters inside the element, animate them
-          entry.target.querySelectorAll('.count').forEach((counter) => {
-            const target = +counter.getAttribute('data-target');
-            let count = 0;
-            const step = target / 60;
-            const interval = setInterval(() => {
-              count += step;
-              if (count >= target) {
-                counter.textContent = target;
-                clearInterval(interval);
-              } else {
-                counter.textContent = Math.floor(count);
-              }
-            }, 30);
-          });
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'white';
+      stars.forEach((star) => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
         }
       });
-    }, { threshold: 0.2 });
-    document.querySelectorAll('.fade-slide').forEach((el) => observer.observe(el));
+      requestAnimationFrame(animateStars);
+    }
+    window.addEventListener('resize', initStars);
+    initStars();
+    animateStars();
+    // Shooting stars occasionally
+    function createShootingStar() {
+      const sx = Math.random() * canvas.width;
+      const sy = Math.random() * canvas.height * 0.5;
+      const length = Math.random() * 80 + 50;
+      const endX = sx + length;
+      const endY = sy + length * 0.2;
+      const star = { x: sx, y: sy, ex: endX, ey: endY, alpha: 1 };
+      const shootInterval = setInterval(() => {
+        ctx.strokeStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(star.x, star.y);
+        ctx.lineTo(star.ex, star.ey);
+        ctx.stroke();
+        star.x += 10;
+        star.y += 2;
+        star.ex += 10;
+        star.ey += 2;
+        star.alpha -= 0.02;
+        if (star.alpha <= 0) {
+          clearInterval(shootInterval);
+        }
+      }, 30);
+    }
+    setInterval(() => {
+      if (Math.random() < 0.3) createShootingStar();
+    }, 5000);
+    // Testimonials rotation
+    const slides = document.querySelectorAll('.testimonial-slide');
+    let currentSlide = 0;
+    setInterval(() => {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }, 5000);
+    // Stats counter animation
+    const statCards = document.querySelectorAll('.stat-card .number');
+    const statsObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.getAttribute('data-target'), 10);
+          let count = 0;
+          const increment = () => {
+            if (count <= target) {
+              el.textContent = count + '%';
+              count++;
+              requestAnimationFrame(increment);
+            }
+          };
+          increment();
+          statsObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    statCards.forEach(card => statsObserver.observe(card));
+    // Set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
   </script>
 </body>
 </html>
