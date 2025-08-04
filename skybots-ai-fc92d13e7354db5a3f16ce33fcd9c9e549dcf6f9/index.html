@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyBot – Conversational AI Demos</title>
+  <!-- Google Fonts for futuristic typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Accent colours for neon highlights */
+      --accent-teal: #00cfff;
+      --accent-violet: #8f5df4;
+      --text-light: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-light);
+      background: #000; /* fallback colour */
+      overflow-x: hidden;
+    }
+
+    /* Background container with two layers of stars to simulate motion */
+    #space-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -2;
+    }
+
+    #space-bg img {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      opacity: 0.6;
+    }
+
+    #space-bg .layer1 {
+      animation: driftLayer1 60s linear infinite;
+    }
+
+    #space-bg .layer2 {
+      animation: driftLayer2 100s linear infinite;
+    }
+
+    /* Keyframes for slow drifting movement */
+    @keyframes driftLayer1 {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(-50%, -25%, 0);
+      }
+    }
+
+    @keyframes driftLayer2 {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        transform: translate3d(-25%, -50%, 0);
+      }
+    }
+
+    /* Slight gradient overlay for readability */
+    #space-bg::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 10, 30, 0.5), rgba(0, 20, 60, 0.8));
+      z-index: 1;
+    }
+
+    /* Header and navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 10px 20px;
+      z-index: 100;
+    }
+
+    .nav-wrapper {
+      width: 100%;
+      max-width: 1300px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+    }
+
+    .logo .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-teal), var(--accent-violet));
+      margin-right: 8px;
+    }
+
+    .schedule-btn {
+      font-family: 'Inter', sans-serif;
+      padding: 8px 24px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-teal);
+      background: transparent;
+      color: var(--accent-teal);
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .schedule-btn:hover {
+      background: var(--accent-teal);
+      color: #00131f;
+      box-shadow: 0 0 12px var(--accent-teal);
+    }
+
+    /* Hero section */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 20px 80px;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      line-height: 1.3;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 15px 25px;
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent-teal);
+      animation: highlightGlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes highlightGlow {
+      0%, 100% { text-shadow: 0 0 8px var(--accent-teal), 0 0 15px var(--accent-violet); }
+      50% { text-shadow: 0 0 4px var(--accent-violet), 0 0 8px var(--accent-teal); }
+    }
+
+    .hero .accent-line {
+      margin-top: 14px;
+      height: 3px;
+      width: 200px;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));
+      border-radius: 2px;
+    }
+
+    /* Audio demos section */
+    .demos {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .demos h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+    }
+
+    .audio-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .audio-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.4s, box-shadow 0.4s;
+    }
+
+    .audio-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .audio-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .audio-card audio {
+      width: 100%;
+      outline: none;
+    }
+
+    /* Metrics section */
+    .metrics {
+      padding: 60px 20px 80px;
+      text-align: center;
+    }
+
+    .metrics h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .metrics .line {
+      height: 3px;
+      width: 220px;
+      margin: 0 auto 40px;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));
+      border-radius: 2px;
+    }
+
+    .stat-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.4rem;
+      color: var(--accent-teal);
+      margin-bottom: 10px;
+    }
+
+    .stat-card p {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    /* Chatbot demos section */
+    #chatbot-demos {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    #chatbot-demos h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+    .chatbot-demo-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .chatbot-demo {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      max-width: 420px;
+      width: 100%;
+    }
+    .chatbot-demo h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .chatbot-demo iframe {
+      width: 100%;
+      height: 600px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+    }
+
+    /* Animation for fade and slide when sections come into view */
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .fade-slide.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2rem;
+        padding: 10px 15px;
+      }
+      .metrics .stat-card {
+        width: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Moving starry background -->
+  <div id="space-bg">
+    <img src="space_layer1.jpg" alt="Starry background layer" class="layer1" />
+    <img src="space_layer2.jpg" alt="Starry background layer" class="layer2" />
+  </div>
+
+  <!-- Navigation bar with logo and schedule button -->
+  <header>
+    <div class="nav-wrapper">
+      <div class="logo"><span class="dot"></span>SkyBot</div>
+      <button class="schedule-btn" onclick="location.href='schedule.html'">Schedule a Demo</button>
+    </div>
+  </header>
+
+  <!-- Hero section with dynamic phrases -->
+  <section class="hero fade-slide">
+    <h1>
+      <span id="phrase-prefix">Elevating</span>
+      <span id="phrase-keyword" class="highlight">Customer Experience</span>
+      with Conversational AI Agents
+    </h1>
+    <div class="accent-line"></div>
+  </section>
+
+  <!-- Chatbot demo section (two interactive chatbots) -->
+  <section id="chatbot-demos" class="fade-slide">
+    <h2>Try Our AI Chatbots Live</h2>
+    <!-- Mascot for chatbots -->
+    <div style="display:flex; justify-content:center; margin-bottom:20px;">
+      <img src="chatbot_mascot.png" alt="Chatbot Mascot" style="width:120px; height:auto;" />
+    </div>
+    <div class="chatbot-demo-container">
+      <div class="chatbot-demo">
+        <h3>Chatbot Demo 1</h3>
+        <iframe src="https://creator.voiceflow.com/prototype/67b86887c97c50a0c1d01c96" width="400" height="600" frameborder="0" allow="microphone; autoplay"></iframe>
+      </div>
+      <div class="chatbot-demo">
+        <h3>Chatbot Demo 2</h3>
+        <iframe src="https://creator.voiceflow.com/prototype/67c6233d005cea773533d6c3" width="400" height="600" frameborder="0" allow="microphone; autoplay"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audio demo section -->
+  <section class="demos fade-slide">
+    <!-- Mascot for voicebot demos -->
+    <div style="display:flex; justify-content:center; margin-bottom:20px;">
+      <img src="voicebot_mascot.png" alt="Voicebot Mascot" style="width:120px; height:auto;" />
+    </div>
+    <h2>Listen to Our Demos</h2>
+    <div class="audio-grid">
+      <div class="audio-card">
+        <h3>Credit Check Over the Phone</h3>
+        <audio controls preload="metadata">
+          <source src="credit_check_over_the_phone.m4a" type="audio/mp4" />
+          Your browser does not support this audio element.
+        </audio>
+      </div>
+      <div class="audio-card">
+        <h3>Deciding Lease vs. Own</h3>
+        <audio controls preload="metadata">
+          <source src="deciding_lease_vs_own.m4a" type="audio/mp4" />
+          Your browser does not support this audio element.
+        </audio>
+      </div>
+      <div class="audio-card">
+        <h3>Reservation Demo</h3>
+        <audio controls preload="metadata">
+          <source src="reservation_demo.m4a" type="audio/mp4" />
+          Your browser does not support this audio element.
+        </audio>
+      </div>
+      <div class="audio-card">
+        <h3>Trade-In / Appraisals</h3>
+        <audio controls preload="metadata">
+          <source src="trade_in_appraisals.m4a" type="audio/mp4" />
+          Your browser does not support this audio element.
+        </audio>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics section -->
+  <section class="metrics fade-slide">
+    <h2>Innovation in Every Interaction</h2>
+    <div class="line"></div>
+    <div class="stat-container">
+      <div class="stat-card">
+        <h3><span class="count" data-target="85">0</span>%</h3>
+        <p>Customer Experience increases CSAT by 85%</p>
+      </div>
+      <div class="stat-card">
+        <h3><span class="count" data-target="75">0</span>%</h3>
+        <p>Agent Productivity increases Contact Center Agent Productivity by 75%</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Rotate through phrases with highlighted keywords
+    const phrases = [
+      { prefix: 'Elevating', keyword: 'Customer Experience' },
+      { prefix: 'Empowering', keyword: 'Salespeople' },
+      { prefix: 'Supporting', keyword: 'Employees' }
+    ];
+    let phraseIndex = 0;
+    const prefixEl = document.getElementById('phrase-prefix');
+    const keywordEl = document.getElementById('phrase-keyword');
+
+    function changePhrase() {
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      prefixEl.textContent = phrases[phraseIndex].prefix;
+      keywordEl.textContent = phrases[phraseIndex].keyword;
+    }
+    // Change phrase every 5 seconds
+    setInterval(changePhrase, 5000);
+
+    // Intersection observer for fade-slide and count animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // If there are counters inside the element, animate them
+          entry.target.querySelectorAll('.count').forEach((counter) => {
+            const target = +counter.getAttribute('data-target');
+            let count = 0;
+            const step = target / 60;
+            const interval = setInterval(() => {
+              count += step;
+              if (count >= target) {
+                counter.textContent = target;
+                clearInterval(interval);
+              } else {
+                counter.textContent = Math.floor(count);
+              }
+            }, 30);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.fade-slide').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
