@@ -1,618 +1,202 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkyBots.ai – Conversational AI Showcase</title>
-  <!-- Google Fonts for modern futuristic typography -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <!-- Font Awesome for simple icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pItdXKJkAo+PT8Xb16+KyvYtXq6YOxqfNdoUF2wy92CM12EneGZLyktbjLaKZpu2L7zqCK3sC+b/vZDyHgPZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    :root {
-      --primary-color: #0af; /* Neon blue accent */
-      --secondary-color: #8e2de2; /* Violet accent */
-      --text-light: #fff;
-      --card-bg: rgba(255, 255, 255, 0.1);
-      --card-border: rgba(255, 255, 255, 0.3);
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-light);
-      background: #020d1f;
-      overflow-x: hidden;
-    }
-    /* Starfield canvas fills page */
-    #starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-    }
-    /* Dark overlay for readability */
-    #overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0, 0, 30, 0.7), rgba(0, 10, 40, 0.9));
-      z-index: -1;
-    }
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      position: sticky;
-      top: 0;
-      width: 100%;
-      backdrop-filter: blur(10px);
-      z-index: 10;
-    }
-    nav .logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    nav .logo img {
-      width: 32px;
-      height: 32px;
-    }
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-      margin: 0;
-      padding: 0;
-      font-size: 0.95rem;
-    }
-    nav ul li a {
-      color: var(--text-light);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    nav ul li a:hover {
-      color: var(--primary-color);
-    }
-    .sticky-cta {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background: var(--primary-color);
-      color: #000;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 0 10px var(--primary-color);
-      z-index: 11;
-    }
-    .hero {
-      text-align: center;
-      padding: 120px 20px 100px;
-      position: relative;
-    }
-    .hero h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.5;
-    }
-    .hero .cta-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    .hero .cta-buttons a {
-      padding: 12px 22px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.3s;
-    }
-    .hero .cta-primary {
-      background: var(--primary-color);
-      color: #000;
-    }
-    .hero .cta-secondary {
-      border: 2px solid var(--primary-color);
-      color: var(--primary-color);
-    }
-    .hero .cta-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 10px var(--primary-color);
-    }
-    .hero .cta-secondary:hover {
-      background: var(--primary-color);
-      color: #000;
-      transform: translateY(-3px);
-      box-shadow: 0 0 10px var(--primary-color);
-    }
-    .section {
-      padding: 80px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .section h2 {
-      text-align: center;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
-      margin-bottom: 40px;
-      position: relative;
-    }
-    .section h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      border-radius: 2px;
-    }
-    /* Chatbot demos */
-    .chatbot-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      justify-content: center;
-    }
-    .chatbot-demo {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      width: 420px;
-      max-width: 100%;
-    }
-    .chatbot-demo h3 {
-      margin-top: 0;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-    .chatbot-demo iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-      border-radius: 10px;
-    }
-    /* Voice demos */
-    .voice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-    }
-    .voice-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-    }
-    .voice-card h4 {
-      font-family: 'Orbitron', sans-serif;
-      margin-top: 0;
-      margin-bottom: 8px;
-    }
-    .voice-card p {
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-      color: #ccc;
-    }
-    .voice-card audio {
-      width: 100%;
-      outline: none;
-    }
-    /* Testimonials carousel */
-    .testimonials {
-      text-align: center;
-      position: relative;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .testimonial-slide {
-      display: none;
-      font-size: 1rem;
-      line-height: 1.6;
-      padding: 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-    }
-    .testimonial-slide.active {
-      display: block;
-    }
-    .testimonial-slide .stars {
-      color: var(--primary-color);
-      margin-bottom: 10px;
-    }
-    .testimonial-author {
-      margin-top: 10px;
-      font-style: italic;
-      color: #aaa;
-    }
-    /* Stats row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 30px;
-    }
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-    .stat-card .number {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-    .stat-card p {
-      font-size: 0.85rem;
-      color: #ccc;
-    }
-    /* Feature cards */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 30px;
-    }
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-    .feature-card i {
-      font-size: 2rem;
-      color: var(--primary-color);
-      margin-bottom: 10px;
-    }
-    .feature-card p {
-      font-size: 0.9rem;
-    }
-    /* Trust row */
-    .trust-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      font-size: 2rem;
-      margin-top: 40px;
-    }
-    .trust-row i {
-      color: var(--primary-color);
-    }
-    footer {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 40px 20px;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    footer a {
-      color: var(--primary-color);
-      text-decoration: none;
-      margin: 0 8px;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Skybots – AI Voice Bots</title>
+  <meta name="description" content="Skybots voice bots: answer, qualify, schedule, and hand-off—24/7, on-brand." />
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/icon-180.png">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:title" content="Skybots – AI Voice Bots">
+  <meta property="og:description" content="Answer. Qualify. Schedule. Close. Your 24/7 digital rep.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gonia25.github.io/skybots-apple-style-landing/">
+  <meta property="og:image" content="https://gonia25.github.io/skybots-apple-style-landing/images/hero.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="images/hero.webp" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Cache-busted script to ensure new JS loads immediately -->
+  <script defer src="app.js?v=7"></script>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
-  <div id="overlay"></div>
-  <a href="schedule.html" class="sticky-cta">Get a Demo</a>
-  <nav>
-    <div class="logo">
-      <img src="voicebot_mascot.png" alt="SkyBot Mascot" />
-      SkyBot
-    </div>
-    <ul>
-      <li><a href="#chatbots">Chatbots</a></li>
-      <li><a href="#voicebots">Voice Demos</a></li>
-      <li><a href="#about" class="about-link">About Us</a></li>
-    </ul>
-  </nav>
-  <section class="hero" id="hero">
-    <h1>The Sky is the Limit.</h1>
-    <p>Where AI assistants become your most reliable team members.</p>
-    <div class="cta-buttons">
-      <a href="#chatbots" class="cta-primary">See Live Demo</a>
-      <a href="#contact" class="cta-secondary">Schedule a Call</a>
-    </div>
-  </section>
-  <section class="section" id="chatbots">
-    <h2>Try Our AI Chatbots Live</h2>
-    <div class="chatbot-container">
-      <div class="chatbot-demo">
-        <h3>Sales Assistant Bot</h3>
-        <iframe src="https://creator.voiceflow.com/prototype/67b86887c97c50a0c1d01c96" allow="microphone; autoplay"></iframe>
-      </div>
-      <div class="chatbot-demo">
-        <h3>Customer Support Bot</h3>
-        <iframe src="https://creator.voiceflow.com/prototype/67c6233d005cea773533d6c3" allow="microphone; autoplay"></iframe>
-      </div>
-    </div>
-  </section>
-  <section class="section" id="voicebots">
-    <h2>Listen to Our Voice Demos</h2>
-    <div class="voice-grid">
-      <div class="voice-card">
-        <h4>Credit Check Over the Phone</h4>
-        <p>Simulates a live finance call.</p>
-        <audio controls preload="metadata">
-          <source src="credit_check_over_the_phone.m4a" type="audio/mp4" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-      <div class="voice-card">
-        <h4>Deciding Lease vs. Own</h4>
-        <p>Helps customers make purchase decisions.</p>
-        <audio controls preload="metadata">
-          <source src="deciding_lease_vs_own.m4a" type="audio/mp4" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-      <div class="voice-card">
-        <h4>Reservation Demo</h4>
-        <p>Automates booking in under 2 minutes.</p>
-        <audio controls preload="metadata">
-          <source src="reservation_demo.m4a" type="audio/mp4" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-      <div class="voice-card">
-        <h4>Trade-In / Appraisals</h4>
-        <p>Provides instant car appraisal estimates.</p>
-        <audio controls preload="metadata">
-          <source src="trade_in_appraisals.m4a" type="audio/mp4" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-    </div>
-  </section>
-  <section class="section" id="testimonials">
-    <h2>What People Are Saying</h2>
-    <div class="testimonials">
-      <div class="testimonial-slide active">
-        <div class="stars">★★★★★</div>
-        <p>“This is like the Amazon of technology. My booking system runs itself.”</p>
-        <div class="testimonial-author">— Boutique Hotel Owner</div>
-      </div>
-      <div class="testimonial-slide">
-        <div class="stars">★★★★★</div>
-        <p>“Handles my entire call center with dozens of calls at once. Saving thousands daily.”</p>
-        <div class="testimonial-author">— Retail Ops Director</div>
-      </div>
-      <div class="testimonial-slide">
-        <div class="stars">★★★★★</div>
-        <p>“It pays for itself in less than a month. I can’t believe the price.”</p>
-        <div class="testimonial-author">— Dental Clinic Manager</div>
-      </div>
-      <div class="testimonial-slide">
-        <div class="stars">★★★★★</div>
-        <p>“Our CSAT jumped 85% in 60 days. Feels like talking to a real person 24/7.”</p>
-        <div class="testimonial-author">— SaaS Startup CEO</div>
-      </div>
-    </div>
-  </section>
-  <section class="section" id="stats">
-    <h2>Innovation in Every Interaction</h2>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="number" data-target="52">0%</div>
-        <p>Increase in CSAT</p>
-      </div>
-      <div class="stat-card">
-        <div class="number" data-target="46">0%</div>
-        <p>Boost in Agent Productivity</p>
-      </div>
-      <div class="stat-card">
-        <div class="number" data-target="70">0%</div>
-        <p>Reduction in Missed Calls</p>
-      </div>
-      <div class="stat-card">
-        <div class="number" data-target="60">0%</div>
-        <p>Increase in Lead Capture</p>
-      </div>
-      <div class="stat-card">
-        <div class="number" data-target="50">0%</div>
-        <p>Reduction in Admin Workload</p>
-      </div>
-      <div class="stat-card">
-        <div class="number" data-target="90">0%</div>
-        <p>Faster Response Times</p>
-      </div>
-    </div>
-  </section>
-  <section class="section" id="features">
-    <h2>Why Choose SkyBots?</h2>
-    <div class="features">
-      <div class="feature-card">
-        <i class="fas fa-cog"></i>
-        <p>We customize and install all for one low price.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-user-tie"></i>
-        <p>It’s like an unpaid secretary for life.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-robot"></i>
-        <p>Handles all repetitive tasks, appointments, and works while you sleep.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-bell"></i>
-        <p>Never miss a client ever again.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-dollar-sign"></i>
-        <p>It pays for itself within a month.</p>
-      </div>
-    </div>
-    <div class="trust-row">
-      <i class="fas fa-notes-medical" title="Healthcare"></i>
-      <i class="fas fa-car" title="Automotive"></i>
-      <i class="fas fa-building" title="Real Estate"></i>
-      <i class="fas fa-shopping-bag" title="Retail"></i>
-      <i class="fas fa-laptop-code" title="SaaS"></i>
-    </div>
-    <div style="margin-top:40px;text-align:center;">
-      <strong>30-Day ROI Guarantee:</strong> If SkyBots.ai doesn’t pay for itself in the first month, your next month is free.
-    </div>
-  </section>
-  <footer id="contact">
-    <p>Contact: <a href="mailto:SkyBotsAi@gmail.com">SkyBotsAi@gmail.com</a></p>
-    <p>
-      <a href="#hero">Home</a> |
-      <a href="#chatbots">Demos</a> |
-      <a href="about.html">About Us</a> |
-      <a href="schedule.html">Contact</a>
-    </p>
-    <p>© <span id="year"></span> SkyBots.ai</p>
-  </footer>
+  <!-- Always-dark sticky nav -->
+  <header class="nav">
+    <a class="brand" href="#">Skybots</a>
+    <nav class="nav-links">
+      <a href="#demos-inline">Audio Demos</a>
+      <a href="#features">Features</a>
+      <a href="#plans">Plans</a>
+      <a class="cta" href="#contact">Talk to Sales</a>
+    </nav>
+  </header>
 
-  <script>
-    // Starfield animation
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    const numStars = 200;
-    function initStars() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5 + 0.5,
-          speed: Math.random() * 0.5 + 0.2
-        });
-      }
-    }
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-      });
-      requestAnimationFrame(animateStars);
-    }
-    window.addEventListener('resize', initStars);
-    initStars();
-    animateStars();
-    // Shooting stars occasionally
-    function createShootingStar() {
-      const sx = Math.random() * canvas.width;
-      const sy = Math.random() * canvas.height * 0.5;
-      const length = Math.random() * 80 + 50;
-      const endX = sx + length;
-      const endY = sy + length * 0.2;
-      const star = { x: sx, y: sy, ex: endX, ey: endY, alpha: 1 };
-      const shootInterval = setInterval(() => {
-        ctx.strokeStyle = `rgba(255,255,255,${star.alpha})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(star.x, star.y);
-        ctx.lineTo(star.ex, star.ey);
-        ctx.stroke();
-        star.x += 10;
-        star.y += 2;
-        star.ex += 10;
-        star.ey += 2;
-        star.alpha -= 0.02;
-        if (star.alpha <= 0) {
-          clearInterval(shootInterval);
-        }
-      }, 30);
-    }
-    setInterval(() => {
-      if (Math.random() < 0.3) createShootingStar();
-    }, 5000);
-    // Testimonials rotation
-    const slides = document.querySelectorAll('.testimonial-slide');
-    let currentSlide = 0;
-    setInterval(() => {
-      slides[currentSlide].classList.remove('active');
-      currentSlide = (currentSlide + 1) % slides.length;
-      slides[currentSlide].classList.add('active');
-    }, 5000);
-    // Stats counter animation
-    const statCards = document.querySelectorAll('.stat-card .number');
-    const statsObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const target = parseInt(el.getAttribute('data-target'), 10);
-          let count = 0;
-          const increment = () => {
-            if (count <= target) {
-              el.textContent = count + '%';
-              count++;
-              requestAnimationFrame(increment);
-            }
-          };
-          increment();
-          statsObserver.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-    statCards.forEach(card => statsObserver.observe(card));
-    // Set year in footer
-    document.getElementById('year').textContent = new Date().getFullYear();
-    // Smooth scroll for nav links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-  </script>
+  <main>
+    <!-- HERO -->
+    <section class="section dark hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 id="hero-title">A highly intelligent<br>voice bot—family-friendly fast.</h1>
+          <p class="hero-sub">Answer. Qualify. Schedule. Close. Your 24/7 digital rep.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#demos-inline">Listen to demos</a>
+            <a class="btn ghost" href="#demos-inline">See how it works</a>
+          </div>
+        </div>
+        <figure class="hero-media">
+          <img src="images/hero.webp" alt="Youthful friendly service robot presenting an audio waveform."
+               width="1600" height="900" decoding="async">
+        </figure>
+      </div>
+    </section>
+
+    <!-- FEATURES: Slab #1 (light) — demos embedded on the left -->
+    <section id="features" class="section light" aria-label="Highlights">
+      <div class="container panel">
+        <div class="copy">
+          <h2>Natural. Fast. On-brand.</h2>
+          <p>Latency-tuned speech with calm, human-like pacing and your exact tone.</p>
+
+          <!-- Inline demos block -->
+          <div id="demos-inline" class="demos-inline" aria-label="Audio demos">
+            <h3 class="demos-title">Audio demos</h3>
+            <div id="audio-list" class="demo-list" role="list" aria-describedby="demos-inline">
+              <!-- JS injects three stacked demo bars here -->
+              <div class="skeleton bar"></div>
+              <div class="skeleton bar"></div>
+              <div class="skeleton bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <img src="images/speed.webp"
+             alt="Robot hand indicating a glass tile with ultra-low latency waveform."
+             width="1600" height="1066" loading="lazy" decoding="async">
+      </div>
+    </section>
+
+    <!-- FEATURES: Slab #2 (dark) -->
+    <section class="section dark">
+      <div class="container panel">
+        <div class="copy">
+          <h2>Plugs into anything.</h2>
+          <p>Calendars, CRMs, forms, spreadsheets, webhooks, analytics—no human routing.</p>
+        </div>
+        <img src="images/integrations.webp"
+             alt="Friendly robot surrounded by neutral system glyphs for integrations."
+             width="1600" height="1066" loading="lazy" decoding="async">
+      </div>
+    </section>
+
+    <!-- FEATURES: Slab #3 (light) -->
+    <section class="section light">
+      <div class="container panel">
+        <div class="copy">
+          <h2>Scales without drift.</h2>
+          <p>Throughout peak hours, consistent voice, and guardrails that actually hold.</p>
+        </div>
+        <img src="images/dashboard.webp"
+             alt="Dark analytics dashboard for voice bot with throughput and answer rate."
+             width="1600" height="1066" loading="lazy" decoding="async">
+      </div>
+    </section>
+
+    <!-- PLANS -->
+    <section id="plans" class="section light" aria-labelledby="plans-title">
+      <div class="container">
+        <h2 id="plans-title">Plans that match your rollout</h2>
+        <p class="muted">Start now. Scale when you’re ready.</p>
+
+        <div class="cards three">
+          <article class="card">
+            <h3>Starter</h3>
+            <p class="sub">Pilot a single bot in one channel.</p>
+            <ul>
+              <li>1 voice bot, 1 number</li>
+              <li>Basic transcripts & summaries</li>
+              <li>Email hand-offs</li>
+            </ul>
+            <div class="actions">
+              <a href="#contact" class="btn primary">Start free</a>
+              <a href="#compare" class="btn ghost">Compare plans</a>
+            </div>
+          </article>
+
+          <article class="card accent">
+            <h3>Growth</h3>
+            <p class="sub">Multi-bot, CRM/webhook integration.</p>
+            <ul>
+              <li>Multiple bots & numbers</li>
+              <li>CRM/webhook sync</li>
+              <li>SLA support</li>
+            </ul>
+            <div class="actions">
+              <a href="#contact" class="btn primary">Talk to sales</a>
+              <a href="#compare" class="btn ghost">Compare plans</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Enterprise</h3>
+            <p class="sub">Security, compliance, and scale.</p>
+            <ul>
+              <li>SSO, audit trails</li>
+              <li>Dedicated success manager</li>
+              <li>Custom routing & guardrails</li>
+            </ul>
+            <div class="actions">
+              <a href="#contact" class="btn primary">Contact us</a>
+              <a href="#compare" class="btn ghost">Compare plans</a>
+            </div>
+          </article>
+        </div>
+
+        <div id="compare" class="compare">
+          <details>
+            <summary>See plan comparison</summary>
+            <table aria-label="Plan comparison">
+              <thead><tr><th>Feature</th><th>Starter</th><th>Growth</th><th>Enterprise</th></tr></thead>
+              <tbody>
+                <tr><td>Bots & numbers</td><td>1 / 1</td><td>Multi / Multi</td><td>Unlimited</td></tr>
+                <tr><td>Transcripts</td><td>Basic</td><td>Enhanced</td><td>Advanced + export</td></tr>
+                <tr><td>Integrations</td><td>Email</td><td>CRM/Webhooks</td><td>Custom</td></tr>
+                <tr><td>Support</td><td>Community</td><td>SLA</td><td>Dedicated</td></tr>
+                <tr><td>Compliance</td><td>—</td><td>—</td><td>SSO/Audit</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section dark" aria-labelledby="contact-title">
+      <div class="container contact">
+        <h2 id="contact-title">Get started</h2>
+        <form class="contact-form" action="https://formspree.io/f/your-id" method="POST">
+          <label>Name<input name="name" required></label>
+          <label>Email<input name="email" type="email" required></label>
+          <label>Company<input name="company"></label>
+          <label>Message<textarea name="message" rows="4" placeholder="Tell us what you need automated."></textarea></label>
+          <button class="btn primary" type="submit">Request a callback</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- CTA FOOTER IMAGE -->
+    <section class="section dark cta-footer" aria-hidden="true">
+      <img src="images/cta.webp" alt="Minimal desk scene with friendly robot, mic puck, and waveform card."
+           width="1920" height="823" loading="lazy" decoding="async">
+    </section>
+  </main>
+
+  <footer class="footer">
+    <nav class="foot-links">
+      <a href="#contact">Contact</a><span>•</span>
+      <a href="#" aria-disabled="true">Privacy</a><span>•</span>
+      <a href="#" aria-disabled="true">Terms</a>
+    </nav>
+    <p>© <span id="year"></span> Skybots. All rights reserved.</p>
+  </footer>
 </body>
 </html>
